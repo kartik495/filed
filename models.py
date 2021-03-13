@@ -1,6 +1,6 @@
 from typing import Optional,List,Dict,Union
 from datetime import datetime, time
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field,conlist,constr
 
 
 class Audio(BaseModel):
@@ -8,7 +8,6 @@ class Audio(BaseModel):
 
 class Song(Audio):
     name: str = Field(...,max_length=100)
-    
     
     class Config:
         classname='song'
@@ -24,10 +23,7 @@ class Song(Audio):
 class Podcast(Audio):
     host:str =Field(...,max_length=100)
     name: str = Field(...,max_length=100)
-    participants : Optional[List[str]]=Field(max_length=10)
-    
-    
-
+    participants : conlist(constr(max_length=100), min_items=None, max_items=10)=Field(exclusiveMaximum=10)
     
     class Config:
         classname='podcast'

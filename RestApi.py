@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi.responses import JSONResponse
 audio_types=[Song,Podcast,Audiobook]
 app = FastAPI()
-available_uid=[]
+available_uid={i.Config.classname:[] for i in audio_types}
 client=MongoClient('mongodb+srv://username:usernamepassword@cluster0.skudm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
 db=client.get_database('Audio')
 
@@ -23,11 +23,11 @@ def create(data:AudioCreate):
             collection=db.get_collection(model.Config.collectionName)
             data['datetime']=datetime.now()
             
-            if available_uid==[]:
+            if available_uid[model.Config.classname]==[]:
                 data['uid']=collection.count_documents({})
             else:
-                data['uid']=available_uid[0]
-                del available_uid[0]
+                data['uid']=available_uid[model.Config.classname][0]
+                del available_uid[model.Config.classname][0]
             collection.insert_one(data)
             return JSONResponse(content={'message':f'success'},status_code=200)
     return JSONResponse(content={'error':f'AudioType "{data.audioType}" does not exist'},status_code=404)
@@ -45,7 +45,7 @@ def delete(audio_type:str,audio_id:str):
             if collection.find_one(filter={'uid':audio_id})==None:
                 return JSONResponse(content={'error':f'Audio File {audio_type}/{audio_id} does not exist'},status_code=404)
             collection.delete_one(filter={'uid':audio_id})
-            available_uid.append(audio_id)
+            available_uid[model.Config.classname].append(audio_id)
             return JSONResponse(content={'message':f'success'},status_code=200)
 
     return JSONResponse(content={'error':f'AudioType {audio_type} does not exist'},status_code=404)
