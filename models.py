@@ -2,7 +2,27 @@ from typing import Optional,List,Dict,Union
 from datetime import datetime, time
 from pydantic import BaseModel, Field,conlist,constr
 
+"""
+These class define the structure, fields and contraints on each field.
+Here 2 field are not added as per written in task 
+* Upload time
+* ID
+These 2 field value will not be taken by Frontend. 
+Real time Upload time is saved every time Audio file is created or Updated.
+Since ID is primary key, Unique ID is given every time a new Audio File is created from Backend Side.
+All the IDs for same Audio Type is Unique.
 
+All the Audio Type class, Except for class Audio which act as base class contains sub-class Config which contains few required properties and data.
+Properties-
+* classname - contains name of the class so that we can check that the API request is for which type of the Audio File.
+* collectionName - It store the collection name in which data is stored in MongoDB atlas cluster. If the name of the collection is changed in Atlas we change the name of collection here and APIs will work fine.
+
+Data-
+* schema_extra- It contain example of Schema of respective Audio Type classes which will help the Frontend Team while making API request.
+
+One Extra class is here - AudioCreate
+It contain fields for request body for Making Create Audio file request and Update Audio file request.
+"""
 class Audio(BaseModel):
     duration: int = Field(...,gt=0)
 
@@ -55,8 +75,6 @@ class Audiobook(Audio):
                 "duration": 100,
             }
         }
-
-
 
 class AudioCreate(BaseModel):
     audioType:str
