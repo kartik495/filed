@@ -216,16 +216,16 @@ def get(path:str):
             audio_id=int(audio_id)
         except:
             return JSONResponse(content={'error':'audio_id is not integer'},status_code=404)
-    
-    '''
-    Get the requested document
-    if it exist return response with status code 200 and document
-    if it doesn't exist return response with status code 404 and resposne with error message 
-    '''
-    doc=collection.find_one(filter={'uid':audio_id})
-    if doc==None:
-        return JSONResponse(content={'error':f'Audio File {audio_type}/{audio_id} does not exist'},status_code=404)
-    del doc['_id']
-    doc['datetime']=str(doc['datetime'])
-    return JSONResponse(content={'document':doc},status_code=200)
-    
+        
+        '''
+        Get the requested document
+        if it exist return response with status code 200 and document
+        if it doesn't exist return response with status code 404 and resposne with error message 
+        '''
+        doc=collection.find_one(filter={'uid':audio_id})
+        if doc==None:
+            return JSONResponse(content={'error':f'Audio File {audio_type}/{audio_id} does not exist'},status_code=404)
+        del doc['_id']
+        doc['datetime']=str(doc['datetime'])
+        return JSONResponse(content={'document':doc},status_code=200)
+        
